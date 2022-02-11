@@ -1,3 +1,13 @@
+<?php
+
+$host = $_SERVER["SERVER_NAME"];
+$www = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 5)) == 'https' ? 'https' : 'http' . "://" . $host;
+$localList = ["heldenapp.local"];
+$devList = ["heldenapp.local", "heldenapp.designbuero-freise.de"];
+$isDev = in_array($host, $devList);
+$isLocal = in_array($host, $localList);
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -11,13 +21,22 @@
 
     <script src="./js/config.js"></script>
     <script src="./js/jquery.min.js"></script>
+    <script src="./js/easel.js"></script>
     <script src="./js/ohno.js"></script>
-    <script src="./js/easeljs.min.js"></script>
-    <script src="js/vue.js"></script>
+    <script src="<?php echo ($isDev) ? 'https://vuejs.org/js/vue.js' : 'js/vue.js'; ?>"></script>
 
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/styles.css?v=<?php if ($isDev) {
+                                        echo time();
+                                    } ?>" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php if ($isLocal) { ?>
+        <script>
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+            window.devMode = true;
+        </script>
+    <?php } ?>
 
 </head>
 
@@ -534,6 +553,8 @@
 
 </body>
 
-<script src="js/helden.js"></script>
+<script src="js/helden.js?v=<?php if ($isDev) {
+                                echo time();
+                            } ?>"></script>
 
 </html>
